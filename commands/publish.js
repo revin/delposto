@@ -280,6 +280,9 @@ function publish(args) {
     truncatedPostData.tags = tagSummaryData.tags;
     meta.data.tags = tagSummaryData.tags;
 
+    //Generate the atom.xml feed
+    convert(templates.text.atom_xml, truncatedPostData, pdir('atom.xml'));
+
     //Data for the archives page
     data = {};
     lang.mixin(data, meta.data);
@@ -288,7 +291,6 @@ function publish(args) {
         /* Tag summary   */['tags/index',     tagSummaryData,    pdir('tags', 'index.html'),     '..'],
         /* Front page    */['index',          truncatedPostData, pdir('index.html'),             '.' ],
         /* About page    */['about/index',    truncatedPostData, pdir('about', 'index.html'),    '..'],
-        /* atom.xml feed */['atom_xml',       truncatedPostData, pdir('atom.xml')                    ],
         /* Archives page */['archives/index', data,              pdir('archives', 'index.html'), '..']
     ];
     pages.forEach(function (pageData) {
