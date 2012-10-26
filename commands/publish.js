@@ -155,6 +155,7 @@ function publish(args) {
         }
 
         baseDir = (urlType == "path") ? getBaseDir(draftPath, isDirectory) : getDateDir();
+        //TODO: remove this if merging code from jrburke
         shortPubPath = baseDir.length ? baseDir + '/' : '';
         pubPath = pdir(baseDir);
         srcPubPath = path.join(dirs.srcPublished, baseDir);
@@ -324,7 +325,9 @@ publish.mixinData = function (srcPath, publishData) {
     publishData.blogDomain = meta.data.blogDomain;
     publishData.atomUrl = meta.data.atomUrl;
     publishData.url = meta.data.url + publishData.path + '/';
+    publishData.urlPath = publishData.path + '/';
     publishData.postDateString = (new Date(publishData.postTime)).toUTCString();
+    publishData.postShortDateString = publishData.postDateString.split(' ').splice(0,4).join(' ').replace(',','');
 
     publishData.description = extractDescription(publishData.content);
 };
