@@ -151,7 +151,7 @@ function publish(args) {
         }
 
         baseDir = (urlType == "path") ? getBaseDir(draftPath, isDirectory) : getDateDir();
-        shortPubPath = baseDir + '/';
+        shortPubPath = baseDir.length ? baseDir + '/' : '';
         pubPath = pdir(baseDir);
         srcPubPath = path.join(dirs.srcPublished, baseDir);
 
@@ -323,7 +323,7 @@ publish.mixinData = function (srcPath, publishData) {
 };
 
 publish.renderPost = function (srcPath, publishedData) {
-    var postPath, srcDir, postTemplate;
+    var postPath, srcDir, postTemplate, parentCount, rootPath;
 
     if (fs.statSync(srcPath).isDirectory()) {
         srcDir = srcPath;
@@ -338,6 +338,10 @@ publish.renderPost = function (srcPath, publishedData) {
         file.copyDir(srcDir, postPath, null, null, /index\.md/);
     }
 
+    //Figure out how deeply nested the post is, to determine the rootPath value
+    parentCount = publishedData.url.replace(meta.data.url, '').split('/').length - 1;
+    rootPath = (new Array(parentCount + 1)).join('../').slice(0, -1);
+
     //Write out the post in HTML form.
     if (publishedData.headers.template) {
         postTemplate = resolveTemplate(publishedData.headers.template, templates.text);
@@ -346,7 +350,7 @@ publish.renderPost = function (srcPath, publishedData) {
         postTemplate = templates.text.year.month.day.title.index_html;
     }
     convert(postTemplate, publishedData,
-            path.join(postPath, 'index.html'), '../../../..');
+            path.join(postPath, 'index.html'), rootPath);
 };
 
 publish.summary = 'Publishes a draft post in the "drafts" folder to ' +
