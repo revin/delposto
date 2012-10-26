@@ -23,6 +23,10 @@ var file = require('../lib/file'),
 
     pubSrcRegExp = /\bsrc-published\b/,
 
+    //Field name for loaded template data in the `templates` module, either
+    //'index_html' or 'index_jade'
+    templateField,
+
     //How many characters to use for the "description" of a
     //post, which is just that set of characters from the
     //markdown source of the post
@@ -102,7 +106,7 @@ function convert(template, data, outPath, rootPath) {
     if (rootPath) {
         data.rootPath = rootPath;
     }
-    var html = render(template, data);
+    var html = render(template, data, meta);
     file.write(outPath, html);
 }
 
@@ -185,6 +189,9 @@ function publish(args) {
         }
     }
 
+    //Determine where to look for template data
+    templateField = render.getTemplateType(meta.data.templateEngine).template;
+
     latestPost = meta.data.published[0];
     if (latestPost) {
         meta.data.updatedTime = latestPost.postTime;
@@ -257,7 +264,7 @@ function publish(args) {
         //Tag's index.
         lang.mixin(tagData, meta.data);
         tagData.atomUrl = url + '/atom.xml';
-        convert(templates.text.tags.name.index_html, tagData,
+        convert(templates.text.tags.name[templateField], tagData,
                 path.join(tagPath, 'index.html'), '../..');
 
         //Atom feed, limit to truncate limit
@@ -269,7 +276,7 @@ function publish(args) {
 
     //Generate tag summary.
     lang.mixin(tagSummaryData, meta.data);
-    convert(templates.text.tags.index_html, tagSummaryData,
+    convert(templates.text.tags[templateField], tagSummaryData,
             pdir('tags', 'index.html'), '..');
 
     //Hold on to the tag summary data for use on top level pages.
@@ -277,11 +284,11 @@ function publish(args) {
     meta.data.tags = tagSummaryData.tags;
 
     //Generate the front page
-    convert(templates.text.index_html, truncatedPostData,
+    convert(templates.text[templateField], truncatedPostData,
             pdir('index.html'), '.');
 
     //the about page
-    convert(templates.text.about.index_html, truncatedPostData,
+    convert(templates.text.about[templateField], truncatedPostData,
             pdir('about', 'index.html'), '..');
 
     //Generate the atom.xml feed
@@ -290,7 +297,7 @@ function publish(args) {
     //Generate the archives page
     data = {};
     lang.mixin(data, meta.data);
-    convert(templates.text.archives.index_html, data, pdir('archives',
+    convert(templates.text.archives[templateField], data, pdir('archives',
             'index.html'), '..');
 
     //Copy over any other directories needed to run.
@@ -347,7 +354,7 @@ publish.renderPost = function (srcPath, publishedData) {
         postTemplate = resolveTemplate(publishedData.headers.template, templates.text);
     }
     if (!postTemplate) {
-        postTemplate = templates.text.year.month.day.title.index_html;
+        postTemplate = templates.text.year.month.day.title[templateField];
     }
     convert(postTemplate, publishedData,
             path.join(postPath, 'index.html'), rootPath);
