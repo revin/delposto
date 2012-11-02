@@ -300,7 +300,8 @@ publish.mixinData = function (srcPath, publishData) {
     publishData.url = meta.data.url + publishData.path + '/';
     publishData.urlPath = publishData.path + '/';
     publishData.postDateString = (new Date(publishData.postTime)).toUTCString();
-    publishData.postShortDateString = publishData.postDateString.split(' ').splice(0,4).join(' ').replace(',','');
+    publishData.postShortDateString = publishData.postDateString.split(' ').splice(1,3).join(' ').replace(',','');
+    publishData.htmlPreviewContent = publishData.htmlContent.split(/<!--\s*more\s*-->/i)[0];
 
     publishData.description = extractDescription(publishData.content);
 };
