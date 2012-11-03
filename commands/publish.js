@@ -332,6 +332,7 @@ publish.mixinData = function (srcPath, publishData) {
 
 publish.renderPost = function (srcPath, publishedData) {
     var postPath, srcDir, postTemplate, parentCount, rootPath;
+    var chosenTemplate = publishedData.headers.template || meta.data.defaultTemplate;
 
     if (fs.statSync(srcPath).isDirectory()) {
         srcDir = srcPath;
@@ -351,8 +352,8 @@ publish.renderPost = function (srcPath, publishedData) {
     rootPath = (new Array(parentCount + 1)).join('../').slice(0, -1);
 
     //Write out the post in HTML form.
-    if (publishedData.headers.template) {
-        postTemplate = resolveTemplate(publishedData.headers.template, templates.text);
+    if (chosenTemplate) {
+        postTemplate = resolveTemplate(chosenTemplate, templates.text);
     }
     if (!postTemplate) {
         postTemplate = templates.text.year.month.day.title[templateField];
