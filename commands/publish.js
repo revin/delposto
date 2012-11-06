@@ -264,7 +264,7 @@ function publish(args) {
 
         //Tag's index.
         lang.mixin(tagData, meta.data);
-        tagData.atomUrl = url + '/atom.xml';
+        tagData.atomUrl = url + ((url.charAt(url.length-1) != '/') ? '/' : '') + 'atom.xml';
         convert(templates.text.tags.name[templateField], tagData,
                 path.join(tagPath, 'index.html'), '../..');
 
