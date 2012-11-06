@@ -300,7 +300,11 @@ function publish(args) {
         /* Tag summary   */['tags/index',     tagSummaryData,    pdir('tags', 'index.html'),     '..'],
         /* Front page    */['index',          truncatedPostData, pdir('index.html'),             '.' ],
         /* About page    */['about/index',    truncatedPostData, pdir('about', 'index.html'),    '..'],
-        /* Archives page */['archives/index', data,              pdir('archives', 'index.html'), '..']
+        /* Archives page */['archives/index', data,              pdir('archives', 'index.html'), '..'],
+        /* Projects page */['projects/index', truncatedPostData, pdir('projects', 'index.html'), '..'],
+        /* Contact page  */['contact/index',  truncatedPostData, pdir('contact', 'index.html'),  '..'],
+        /* 404 page      */['404',            truncatedPostData, pdir('404.html'),               '.'],
+        /* 50x page      */['500',            truncatedPostData, pdir('500.html'),               '.']
     ];
     pages.forEach(function (pageData) {
         pageData[0] = resolveTemplate(pageData[0], templates.text);
