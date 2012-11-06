@@ -20,6 +20,7 @@ var file = require('../lib/file'),
     meta = require('../lib/meta'),
     templates = require('../lib/templates'),
     showdownConverter = new Showdown.converter(),
+    postSlugPlaceholderRegExp = /POST_SLUG/g,
     supportFilesToCompress = {
         '.js': true,
         '.css': true,
@@ -173,6 +174,7 @@ function publish(args) {
 
         shortPubPath += postData.sluggedTitle;
         draftSlug = postData.sluggedTitle;
+        postData.htmlContent = postData.htmlContent.replace(postSlugPlaceholderRegExp, shortPubPath);
         if (!meta.data.published.some(function (item) {
                 return item.path === shortPubPath;
             })) {
@@ -219,6 +221,7 @@ function publish(args) {
             publish.renderPost(path.join(dirs.srcPublished, item.path), item);
 
             postData = post.fromFile(srcPath);
+            postData.htmlContent = postData.htmlContent.replace(postSlugPlaceholderRegExp, item.urlPath);
 
             //Store off tags
             if (postData.headers.tags) {
@@ -296,17 +299,16 @@ function publish(args) {
     data = {};
     lang.mixin(data, meta.data);
 
-    var pages = [
+    ([
         /* Tag summary   */['tags/index',     tagSummaryData,    pdir('tags', 'index.html'),     '..'],
         /* Front page    */['index',          truncatedPostData, pdir('index.html'),             '.' ],
         /* About page    */['about/index',    truncatedPostData, pdir('about', 'index.html'),    '..'],
         /* Archives page */['archives/index', data,              pdir('archives', 'index.html'), '..'],
         /* Projects page */['projects/index', truncatedPostData, pdir('projects', 'index.html'), '..'],
         /* Contact page  */['contact/index',  truncatedPostData, pdir('contact', 'index.html'),  '..'],
-        /* 404 page      */['404',            truncatedPostData, pdir('404.html'),               '.'],
-        /* 50x page      */['500',            truncatedPostData, pdir('500.html'),               '.']
-    ];
-    pages.forEach(function (pageData) {
+        /* 404 page      */['404',            truncatedPostData, pdir('404.html'),               '.' ],
+        /* 50x page      */['500',            truncatedPostData, pdir('500.html'),               '.' ]
+    ]).forEach(function (pageData) {
         pageData[0] = resolveTemplate(pageData[0], templates.text);
         convert.apply(null, pageData);
     });
@@ -345,6 +347,8 @@ publish.mixinData = function (srcPath, publishData) {
     publishData.urlPath = publishData.path + (meta.data.omitTrailingSlashes ? '' : '/');
     publishData.postDateString = (new Date(publishData.postTime)).toUTCString();
     publishData.postShortDateString = publishData.postDateString.split(' ').splice(1,3).join(' ').replace(',','');
+
+    publishData.htmlContent = publishData.htmlContent.replace(postSlugPlaceholderRegExp, publishData.urlPath);
     publishData.htmlPreviewContent = publishData.htmlContent.split(/<!--\s*more\s*-->/i)[0];
 
     publishData.description = extractDescription(publishData.content);
