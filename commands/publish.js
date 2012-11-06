@@ -108,7 +108,7 @@ function draftExists(draftPath) {
 }
 
 function convert(template, data, outPath, rootPath) {
-    if (rootPath) {
+    if (typeof rootPath != 'undefined') {
         data.rootPath = rootPath;
     }
     var html = render(template, data, meta);
