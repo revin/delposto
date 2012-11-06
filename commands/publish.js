@@ -246,7 +246,7 @@ function publish(args) {
         var tagSlug = slug(tag),
             tagPath = pdir('tags', tagSlug),
             published = tags.unique[tag],
-            tagUrl = tagSlug + '/',
+            tagUrl = tagSlug + (meta.data.omitTrailingSlashes ? '' : '/'),
             url = meta.data.url + 'tags/' + tagUrl,
             lastPost = published && published[0],
             tagData = {
@@ -303,7 +303,7 @@ function publish(args) {
 
     if (draftPath) {
         console.log('Published ' + draftPath + ' to ' + pubPath + '/' +
-                    draftSlug + '/');
+                    draftSlug + (meta.data.omitTrailingSlashes ? '' : '/'));
     }
 }
 
@@ -321,8 +321,8 @@ publish.mixinData = function (srcPath, publishData) {
     publishData.blogTitle = meta.data.title;
     publishData.blogDomain = meta.data.blogDomain;
     publishData.atomUrl = meta.data.atomUrl;
-    publishData.url = meta.data.url + publishData.path + '/';
-    publishData.urlPath = publishData.path + '/';
+    publishData.url = meta.data.url + publishData.path + (meta.data.omitTrailingSlashes ? '' : '/');
+    publishData.urlPath = publishData.path + (meta.data.omitTrailingSlashes ? '' : '/');
     publishData.postDateString = (new Date(publishData.postTime)).toUTCString();
     publishData.postShortDateString = publishData.postDateString.split(' ').splice(1,3).join(' ').replace(',','');
     publishData.htmlPreviewContent = publishData.htmlContent.split(/<!--\s*more\s*-->/i)[0];
