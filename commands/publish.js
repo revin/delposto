@@ -20,6 +20,11 @@ var file = require('../lib/file'),
     meta = require('../lib/meta'),
     templates = require('../lib/templates'),
     showdownConverter = new Showdown.converter(),
+    supportFilesToCompress = {
+        '.js': true,
+        '.css': true,
+        '.svg': true
+    },
 
     pubSrcRegExp = /\bsrc-published\b/,
 
@@ -108,6 +113,11 @@ function convert(template, data, outPath, rootPath) {
     }
     var html = render(template, data, meta);
     file.write(outPath, html);
+
+    //pre-compress files
+    if (meta.data.preCompressFiles) {
+        file.makeCompressedCopy(outPath, outPath + '.gz');
+    }
 }
 
 //Generate a directory in the published area.
@@ -299,7 +309,14 @@ function publish(args) {
     });
 
     //Copy over any other directories needed to run.
-    templates.copySupport(pubDir);
+    templates.copySupport(pubDir, function(fileName) {
+        if (meta.data.preCompressFiles) {
+            if (path.extname(fileName).toLowerCase() in supportFilesToCompress) {
+                file.makeCompressedCopy(fileName);
+            }
+        }
+    });
+
 
     if (draftPath) {
         console.log('Published ' + draftPath + ' to ' + pubPath + '/' +
