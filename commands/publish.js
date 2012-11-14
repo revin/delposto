@@ -299,15 +299,15 @@ function publish(args) {
     data = {};
     lang.mixin(data, meta.data);
 
-    ([
-        /* Tag summary   */['tags/index',     tagSummaryData,    pdir('tags', 'index.html'),     '..'],
-        /* Front page    */['index',          truncatedPostData, pdir('index.html'),             '.' ],
-        /* About page    */['about/index',    truncatedPostData, pdir('about', 'index.html'),    '..'],
-        /* Archives page */['archives/index', data,              pdir('archives', 'index.html'), '..'],
-        /* Projects page */['projects/index', truncatedPostData, pdir('projects', 'index.html'), '..'],
-        /* Contact page  */['contact/index',  truncatedPostData, pdir('contact', 'index.html'),  '..'],
-        /* 404 page      */['404',            truncatedPostData, pdir('404.html'),               '.' ],
-        /* 50x page      */['500',            truncatedPostData, pdir('500.html'),               '.' ]
+    ([  // setting the rootPath to '' in each case to anchor links at the site root
+        /* Tag summary   */['tags/index',     tagSummaryData,    pdir('tags', 'index.html'),     ''],
+        /* Front page    */['index',          truncatedPostData, pdir('index.html'),             ''],
+        /* About page    */['about/index',    truncatedPostData, pdir('about', 'index.html'),    ''],
+        /* Archives page */['archives/index', data,              pdir('archives', 'index.html'), ''],
+        /* Projects page */['projects/index', truncatedPostData, pdir('projects', 'index.html'), ''],
+        /* Contact page  */['contact/index',  truncatedPostData, pdir('contact', 'index.html'),  ''],
+        /* 404 page      */['404',            truncatedPostData, pdir('404.html'),               ''],
+        /* 50x page      */['500',            truncatedPostData, pdir('500.html'),               '']
     ]).forEach(function (pageData) {
         pageData[0] = resolveTemplate(pageData[0], templates.text);
         convert.apply(null, pageData);
