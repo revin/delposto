@@ -62,7 +62,10 @@ function draft(args) {
     file.write(draftPath, 'title: ' + ln +
                           'tags: []' + ln +
                           'comments: ' + ln +
-                          '~' + ln + ln);
+                          'slug: ' + ln +
+                          'template: ' + ln +
+                          '~' + ln + ln
+                          '`<rg>`' + ln + ln);
 
     console.log('Draft ' + draftPath + ' created.');
 }
